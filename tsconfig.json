@@ -4,13 +4,13 @@
     "sourceMap": true,
     "rootDir": "./src",  
     "outDir": "./build",
-    "removeComments": true,
+    "removeComments": true, 
     "strict": true,
     "noImplicitAny": true,                
     "strictNullChecks": true,              
     "strictFunctionTypes": true,           
     "strictBindCallApply": true,           
-    "strictPropertyInitialization": true,   
+    "strictPropertyInitialization": true,  
     "noImplicitThis": true,                
     "alwaysStrict": true,
     "target": "es6",   
@@ -27,6 +27,6 @@
     "forceConsistentCasingInFileNames": true
   },
   "exclude": [
-    "node_modules/*"
+    "prisma/*"
   ]
 }
