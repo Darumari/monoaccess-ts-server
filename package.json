@@ -1,12 +1,12 @@
 {
-  "name": "mono-access-api",
+  "name": "mono-access-api-v1",
   "version": "1.0.0",
   "description": "express + postgresql witg prisma Mono Access API",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "start": "node build/index.js",
-    "dev": "ts-node-dev --poll src/index.ts",
+    "dev": "eslint . --ext .ts --fix && ts-node-dev --poll src/index.ts",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
     "prepare": "husky install",
