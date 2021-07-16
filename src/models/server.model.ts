@@ -2,6 +2,9 @@ import express, { Express, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
+import customMiddleware from '../middlewares';
+import NotFoundError from '../errors/not-found.error';
+
 class Server {
   public app: Express;
   private port: number = process.env.PORT ? parseInt(process.env.PORT) : 3001;
@@ -17,6 +20,10 @@ class Server {
     this.app.use(morgan('dev'));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cors());
+    this.app.use(customMiddleware.errorHandler);
+    this.app.all('*', (req: Request, res: Response) => {
+      throw new NotFoundError();
+    });
   };
 
   private routes = () => {
