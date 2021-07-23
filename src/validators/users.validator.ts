@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import BadRequestError from '../errors/bad-request.error';
 import { body, param } from 'express-validator';
+import BadRequestError from '../errors/bad-request.error';
+import NotFoundError from '../errors/not-found.error';
 import BaseValidator from './_base.validator';
+import bcrypt from 'bcrypt';
 
 class UsersValidator extends BaseValidator {
   public validateCreateFields = [
@@ -68,16 +70,59 @@ class UsersValidator extends BaseValidator {
       .withMessage('Id must be a number')
   ];
 
+  public validatePassword = [
+    body('password')
+      .notEmpty()
+      .withMessage('Password is required')
+      .isStrongPassword()
+      .withMessage(
+        'Password must have the following structure: Minimum length of 8 characters, minimum one lowercase letter, one uppercase letter, one number and one symbol'
+      )
+  ];
+
+  public validateLoginFields = [
+    body('email')
+      .notEmpty()
+      .withMessage('Email is required')
+      .isEmail()
+      .withMessage('Email must be a email valid'),
+    body('password').notEmpty().withMessage('Password is required')
+  ];
+
   public validateIfUserExist = async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
     const { email } = req.body;
-    const user = await this.db.users.findFirst({ where: { email } });
+    const user = await this.db.users.findFirst({
+      where: { email, deleted: false }
+    });
     if (user) {
       throw new BadRequestError(`User with email: ${email} already exist`);
     }
+    next();
+  };
+
+  public validateUserCredentials = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { email, password } = req.body;
+    const user = await this.db.users.findFirst({
+      where: { email, status_id: 1, deleted: false }
+    });
+
+    if (!user) {
+      throw new NotFoundError();
+    }
+
+    const passwordCredential = await bcrypt.compare(password, user.password);
+    if (!passwordCredential) {
+      throw new BadRequestError('Bad user credentials');
+    }
+
     next();
   };
 }

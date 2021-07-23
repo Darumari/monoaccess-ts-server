@@ -9,3 +9,5 @@ export class ForbiddenError extends CustomError {
 
   serializeErrors = () => [{ message: this.message }];
 }
+
+export default ForbiddenError;

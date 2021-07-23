@@ -7,7 +7,7 @@ class RequestValidationError extends CustomError {
   constructor (errorIn: ValidationError[]) {
     super('Invalid Parameters');
     this.errors = errorIn;
-    Object.setPrototypeOf(this, RequestValidationError);
+    Object.setPrototypeOf(this, RequestValidationError.prototype);
   }
 
   serializeErrors = () =>

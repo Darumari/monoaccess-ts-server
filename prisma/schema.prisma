@@ -11,18 +11,19 @@ generator client {
 }
 
 model Users {
-  id            Int       @id @default(autoincrement())
-  name          String
-  last_name     String
-  maternal_name String?
-  phone         String?
-  email         String
-  password      String
-  token         String
-  deleted       Boolean   @default(false)
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  deleted_at    DateTime?
+  id                 Int       @id @default(autoincrement())
+  name               String
+  last_name          String
+  maternal_name      String?
+  phone              String?
+  email              String
+  password           String
+  token_confirmation String
+  token_keys         String
+  deleted            Boolean   @default(false)
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
 
   // Reference to Keys (1:N = 1 User to Many Keys)
   Keys Keys[]
