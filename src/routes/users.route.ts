@@ -9,9 +9,9 @@ const router = Router();
 
 // GET - Get user info by id
 router.get(
-  '/:id',
-  validator.validateIdParam,
-  middlewares.validateRequest,
+  '/',
+  middlewares.currentUser,
+  middlewares.requireUser,
   controller.getOne
 );
 
@@ -20,23 +20,44 @@ router.post(
   '/',
   validator.validateCreateFields,
   middlewares.validateRequest,
+  validator.validateIfUserExist,
   controller.create
+);
+
+// POST - Login user
+router.post(
+  '/login',
+  validator.validateLoginFields,
+  middlewares.validateRequest,
+  validator.validateUserCredentials,
+  controller.login
 );
 
 // PUT - Update user
 router.put(
-  '/:id',
-  validator.validateIdParam,
+  '/',
+  middlewares.currentUser,
+  middlewares.requireUser,
   validator.validateEditFields,
   middlewares.validateRequest,
   controller.edit
 );
 
+// PUT - Restore password
+router.put(
+  '/restore-password',
+  middlewares.currentUser,
+  middlewares.requireUser,
+  validator.validatePassword,
+  middlewares.validateRequest,
+  controller.restorePassword
+);
+
 // DELETE - Logic delete user
-// POST - Create user
 router.delete(
-  '/:id',
-  validator.validateIdParam,
+  '/',
+  middlewares.currentUser,
+  middlewares.requireUser,
   middlewares.validateRequest,
   controller.delete
 );
