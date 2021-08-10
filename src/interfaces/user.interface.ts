@@ -5,6 +5,8 @@ export interface IUser {
   maternal_name: string;
   phone: string;
   email: string;
+  token_confirmation: string;
+  token_keys: string;
 }
 
 declare global {

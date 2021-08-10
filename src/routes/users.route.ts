@@ -24,6 +24,14 @@ router.post(
   controller.create
 );
 
+// PUT - Confirm user
+router.get(
+  '/confirmation/:token',
+  validator.validateConfirmEmailFields,
+  middlewares.validateRequest,
+  controller.enable
+);
+
 // POST - Login user
 router.post(
   '/login',

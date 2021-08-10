@@ -89,6 +89,14 @@ class UsersValidator extends BaseValidator {
     body('password').notEmpty().withMessage('Password is required')
   ];
 
+  public validateConfirmEmailFields = [
+    param('token')
+      .notEmpty()
+      .withMessage('Token is required')
+      .isString()
+      .withMessage('Token must be a string')
+  ];
+
   public validateIfUserExist = async (
     req: Request,
     res: Response,
@@ -111,7 +119,7 @@ class UsersValidator extends BaseValidator {
   ) => {
     const { email, password } = req.body;
     const user = await this.db.users.findFirst({
-      where: { email, status_id: 1, deleted: false }
+      where: { email, status_id: 2, deleted: false }
     });
 
     if (!user) {
