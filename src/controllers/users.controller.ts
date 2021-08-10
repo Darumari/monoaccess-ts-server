@@ -3,7 +3,9 @@ import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import BaseController from './_base.controller';
+import MailService from '../services/mail.service';
 
+const mailService = new MailService();
 class UsersController extends BaseController {
   private saltRounds = 10;
   // Get user info by id
@@ -32,6 +34,13 @@ class UsersController extends BaseController {
       req.body.password,
       this.saltRounds
     );
+    const subject = 'Mono Access email confirmation';
+    const confirmationRoute =
+      process.env.URL_COMPLETE +
+      '/users/confirmation/' +
+      encodeURIComponent(tokenConfirmation);
+    const emailContent = `Welcome to Mono Access, please click in the below link to confirm your email address:
+    ${confirmationRoute}`;
     const data = {
       name: req.body.name,
       email: req.body.email,
@@ -46,7 +55,23 @@ class UsersController extends BaseController {
     const user = await this.db.users.create({
       data
     });
+    await mailService.sendMail(user.email, subject, emailContent);
     res.status(201).send(user);
+  };
+
+  // Enable user
+  public enable = async (req: Request, res: Response) => {
+    const token = decodeURIComponent(req.params.token!);
+    await this.db.users.updateMany({
+      where: {
+        token_confirmation: token
+      },
+      data: {
+        token_confirmation: '',
+        status_id: 2
+      }
+    });
+    res.status(200).send('User enabled');
   };
 
   // Login user
@@ -59,9 +84,10 @@ class UsersController extends BaseController {
         last_name: true,
         maternal_name: true,
         phone: true,
-        email: true
+        email: true,
+        token_confirmation: true
       },
-      where: { email, status_id: 1, deleted: false }
+      where: { email, status_id: 2, deleted: false }
     });
     const sessionJwt = jwt.sign(user!, process.env.JWT_KEY!, {
       expiresIn: process.env.JWT_EXPIRATION_TIME!
